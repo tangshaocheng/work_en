@@ -46,7 +46,8 @@ public class DownloadAppListServiceImp extends BaseService implements DownloadAp
 		rmap.put("result", 1);
 		Map<String, Object> subjectMap = new LinkedHashMap<String, Object>();
 		if (mu.equalsIgnoreCase(method, "appCommentList")) {
-			sql.append("SELECT t1.*, t2.name FROM t_app_comment t1 LEFT JOIN t_app_user t2 ON t1.user_id = t2.id WHERE 1=1");
+			sql.append(
+					"SELECT t1.*, t2.name FROM t_app_comment t1 LEFT JOIN t_app_user t2 ON t1.user_id = t2.id WHERE 1=1");
 			if (!"0".equals(para.get("ver"))) {
 				sql.append(" AND t1.app_version = ?");
 				plist.add(para.get("ver"));
@@ -68,7 +69,8 @@ public class DownloadAppListServiceImp extends BaseService implements DownloadAp
 		} else if (mu.equalsIgnoreCase(method, "addComment")) {
 			plist.add(para.get("mac"));
 			plist.add(para.get("appId"));
-			String userId = this.getAppstoreDao().findString("SELECT userId FROM TAppUserAccount WHERE mac = ? and appId = ?", plist.toArray());
+			String userId = this.getAppstoreDao()
+					.findString("SELECT userId FROM TAppUserAccount WHERE mac = ? and appId = ?", plist.toArray());
 			TAppComment po = new TAppComment();
 			po.setTitle(para.get("title"));
 			po.setUserId(mu.toInt(userId));
@@ -79,19 +81,25 @@ public class DownloadAppListServiceImp extends BaseService implements DownloadAp
 		} else {
 			sql.append("SELECT * FROM ( ");
 			sql.append("SELECT * FROM ( ");
-			sql.append("SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = " + sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+			sql.append(
+					"SELECT t3.sort, t5.theme_id subj_id, CONCAT(t2.name) subj_name, t4.pic subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
+							+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 			sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 2 AND t2.id = t3.theme_bag_id ");
 			sql.append("LEFT JOIN t_app_theme t4 ON t3.sub_id = t4.id ");
 			sql.append("LEFT JOIN t_app_theme_list t5 ON t4.id = t5.theme_id ");
 			sql.append("LEFT JOIN t_app t6 ON t5.app_id = t6.id ");
-			sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+			sql.append(
+					"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 			sql.append("ORDER BY t3.sort, t5.sort) t1 ");
 			sql.append("UNION ALL ");
 			sql.append("SELECT * FROM ( ");
-			sql.append("SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = " + sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
+			sql.append(
+					"SELECT t3.sort, 0 subj_id, CONCAT(t2.name) subj_name, '' subj_pic, t7.cat1_name, t7.cat2_name, t6.*  FROM (SELECT * FROM t_app_theme_bag_sort t1 WHERE t1.sort = "
+							+ sort + ") t1 LEFT JOIN t_app_theme_bag t2 ON t1.theme_bag_id = t2.id ");
 			sql.append("LEFT JOIN t_app_theme_bag_list t3 ON t3.sub_type = 1 AND t2.id = t3.theme_bag_id ");
 			sql.append("LEFT JOIN t_app t6 ON t3.sub_id = t6.id ");
-			sql.append("LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
+			sql.append(
+					"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id ");
 			sql.append("ORDER BY t3.sort) t2 ");
 			sql.append(") t1 WHERE t1.sort IS NOT NULL ORDER BY t1.sort");
 			List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapBySql(sql.toString(), plist.toArray());
@@ -135,7 +143,8 @@ public class DownloadAppListServiceImp extends BaseService implements DownloadAp
 					appMap.put("pic", ParaUtils.checkPicUri(map.get("icon")));
 					appMap.put("type", 1);
 					appMap.put("categoryId", map.get("category_id"));
-					appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "", map.get("id").toString(), para.get("ver"), para.get("appType")));
+					appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+							map.get("id").toString()));
 					appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 					appMap.put("name", map.get("name"));
 					appMap.put("summary", map.get("single_word"));
@@ -188,7 +197,8 @@ public class DownloadAppListServiceImp extends BaseService implements DownloadAp
 						appMap.put("type", 1);
 					}
 					appMap.put("categoryId", map.get("category_id"));
-					appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "", map.get("id").toString(), para.get("ver"), para.get("appType")));
+					appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
+							map.get("id").toString()));
 					appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 					appMap.put("name", map.get("name"));
 					appMap.put("summary", map.get("single_word"));

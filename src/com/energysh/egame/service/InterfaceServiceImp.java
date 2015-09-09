@@ -1,6 +1,7 @@
 package com.energysh.egame.service;
 
 import java.io.IOException;
+
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,8 +39,8 @@ import com.energysh.egame.po.appstore.TDeviceMacInfo;
 import com.energysh.egame.po.appstore.TDownCompleteLog;
 import com.energysh.egame.po.appstore.TGameUpdatePush;
 import com.energysh.egame.po.appstore.TInstallCompleteLog;
-import com.energysh.egame.po.appstore.TSearchHot;
 import com.energysh.egame.po.appstore.TSearchLog;
+import com.energysh.egame.po.appstore.TUserAppInfo;
 import com.energysh.egame.util.Constants;
 import com.energysh.egame.util.MarketUtils;
 import com.energysh.egame.util.MyUtil;
@@ -65,12 +66,20 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 		List<Map<String, Object>> packageList = (List<Map<String, Object>>) postContentJSON.get("list");
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		List<Map<String, Object>> rList = new ArrayList<Map<String, Object>>();
-
 		StringBuilder updateDes = new StringBuilder("");
+		this.getAppstoreDao().excuteBySql("DELETE FROM t_user_appInfo WHERE mac=?", new Object[] { mac });
 		for (Map<String, Object> map : packageList) {
 			String packageInfo = String.valueOf(map.get("package"));
 			Map<String, InstalledApp> appListMap = deviceMacInfoService.getAppByPackag(packageInfo);
+			if (map.get("embeded").equals(1) && mac != null && !mac.equals("")) {
+				TUserAppInfo userInfo = new TUserAppInfo();
+				userInfo.setMac(para.get("mac"));
+				userInfo.setTime(new Date());
+				userInfo.setAppVersion(String.valueOf(map.get("version")));
+				userInfo.setPackageName(String.valueOf(map.get("package")));
+				this.getAppstoreDao().save(userInfo);
 
+			}
 			if (appListMap.containsKey(packageInfo)) {
 				InstalledApp app = appListMap.get(packageInfo);
 				Map<String, Object> rMap = new HashMap<String, Object>();
@@ -87,24 +96,22 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 				rMap.put("versionCode", app.getVersionCode());
 				rMap.put("package", packageInfo);
 
-				rMap.put("app",
-						ParaUtils.checkAppUri(app.getApp(),
-								StringUtils.isEmpty(para.get("batchId")) ? "" : para.get("batchId"),
-								StringUtils.isEmpty(para.get("mac")) ? "" : para.get("mac"), "",
-								rMap.get("id").toString(), para.get("ver"), para.get("appType")));
+				rMap.put("app", ParaUtils.checkAppUri(app.getApp(),
+						StringUtils.isEmpty(para.get("batchId")) ? "" : para.get("batchId"),
+						StringUtils.isEmpty(para.get("mac")) ? "" : para.get("mac"), "", rMap.get("id").toString()));
 				rMap.put("size", app.getSize());
 				rMap.put("summary", app.getSummary());
 				rMap.put("newFuture", app.getNewFuture());
 				rMap.put("support", app.getSupport());
 				rMap.put("ret", app.getRet());
-				rMap.put("icon", app.getIcon());
+				rMap.put("icon", ParaUtils.checkPicUri(app.getIcon()));
 				rMap.put("shareContent", app.getShareContent());
 				rMap.put("heat", "4");
-				rMap.put("pic1", app.getPic1());
-				rMap.put("pic2", app.getPic2());
-				rMap.put("pic3", app.getPic3());
-				rMap.put("pic4", app.getPic4());
-				rMap.put("pic5", app.getPic5());
+				rMap.put("pic1", ParaUtils.checkPicUri(app.getPic1()));
+				rMap.put("pic2", ParaUtils.checkPicUri(app.getPic2()));
+				rMap.put("pic3", ParaUtils.checkPicUri(app.getPic3()));
+				rMap.put("pic4", ParaUtils.checkPicUri(app.getPic4()));
+				rMap.put("pic5", ParaUtils.checkPicUri(app.getPic5()));
 				Map<String, Object> info = new HashMap<String, Object>();
 				info.put("company", app.getCompany());
 				info.put("classify", app.getClassify());
@@ -359,11 +366,12 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 
 			appMap.put("categoryId", map.get("category_id"));
 			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
-					map.get("id").toString(), para.get("ver"), para.get("appType")));
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("package", map.get("pakeage"));
 			appMap.put("name", map.get("name"));
-			appMap.put("summary", map.get("single_word"));
+			appMap.put("summary", map.get("app_desc"));
+			// appMap.put("summary", map.get("single_word"));
 			appMap.put("support", map.get("support"));
 			appMap.put("newFuture", map.get("up_desc"));
 			appMap.put("ret", Integer.parseInt(map.get("heat").toString()));
@@ -524,10 +532,11 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
 			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
-					map.get("id").toString(), para.get("ver"), para.get("appType")));
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
-			appMap.put("summary", map.get("single_word"));
+			appMap.put("summary", map.get("app_desc"));
+			// appMap.put("summary", map.get("single_word"));
 			appMap.put("support", map.get("support"));
 			appMap.put("newFuture", map.get("up_desc"));
 			appMap.put("package", map.get("pakeage"));
@@ -650,10 +659,11 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 
 			appMap.put("categoryId", map.get("category_id"));
 			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
-					map.get("id").toString(), para.get("ver"), para.get("appType")));
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
-			appMap.put("summary", map.get("single_word"));
+			appMap.put("summary", map.get("app_desc"));
+			// appMap.put("summary", map.get("single_word"));
 			appMap.put("support", map.get("support"));
 			appMap.put("newFuture", map.get("up_desc"));
 			appMap.put("package", map.get("pakeage"));
@@ -825,10 +835,11 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
 			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
-					map.get("id").toString(), para.get("ver"), para.get("appType")));
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
-			appMap.put("summary", map.get("single_word"));
+			appMap.put("summary", map.get("app_desc"));
+			// appMap.put("summary", map.get("single_word"));
 			appMap.put("support", map.get("support"));
 			appMap.put("newFuture", map.get("up_desc"));
 			appMap.put("package", map.get("pakeage"));
@@ -931,10 +942,11 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
 			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
-					map.get("id").toString(), para.get("ver"), para.get("appType")));
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
-			appMap.put("summary", map.get("single_word"));
+			appMap.put("summary", map.get("app_desc"));
+			// appMap.put("summary", map.get("single_word"));
 			appMap.put("support", map.get("support"));
 			appMap.put("newFuture", map.get("up_desc"));
 			appMap.put("package", map.get("pakeage"));
@@ -1015,49 +1027,34 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 			rmap.put("data", subjectMap);
 			return rmap;
 		}
-
-		String language = para.get("language");
-		String tableName = getTableName(language);
-		sql.append("FROM t_app" + tableName + " t6 ");
-
+		sql.append("FROM t_app t6 ");
 		sql.append(
 				"LEFT JOIN (SELECT t1.id, CONCAT(t1.name) cat2_name, CONCAT(t2.name) cat1_name FROM (SELECT * FROM t_app_category WHERE level = 2) t1 LEFT JOIN (SELECT * FROM t_app_category WHERE level = 1) t2 ON t1.level = t2.id) t7 ON t6.category_id = t7.id left join t_app_category_hot t8 on t6.id=t8.app_id ");
-
 		sql.append("WHERE t6.name LIKE '%" + keyName + "%'");
+		sql.append("OR t6.app_tag LIKE '%" + keyName + "%'");
 		int totalSize = this.getAppstoreDao().findIntBySql("SELECT COUNT(1) " + sql, plist.toArray());
 		PageBar pb = new PageBar(para);
 		if (mu.isNotBlank(para.get("pageNo")) && NumberUtils.isDigits(para.get("pageNo")))
 			pb.setCurrentPageNum(para.get("pageNo"));
 		if (mu.isNotBlank(para.get("pageSize")) && NumberUtils.isDigits(para.get("pageSize")))
-			pb.setEveryPageNum(para.get("pageSize"));
+			pb.setEveryPageNum("30");
 		sql.insert(0, "SELECT t7.cat1_name, t7.cat2_name, t6.*,t8.count ");
-		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapPageBySql(
-				sql.toString() + " ORDER BY LENGTH(t6.name) asc,t8.count desc,t6.id desc", plist.toArray(), pb);
+		List<Map<String, Object>> rlist = this.getAppstoreDao()
+				.findListMapPageBySql(sql.toString() + " ORDER BY t8.count desc", plist.toArray(), pb);
 		DecimalFormat df = new DecimalFormat("#.00");
+
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		rlist = sortSearchList(rlist, keyName);
 		for (int i = 0; i < rlist.size(); i++) {
 			Map<String, Object> map = rlist.get(i);
-
-			// if(Utils.compareAppStoreVersion(para.get("ver")) &&
-			// "11".equals(map.get("app_source").toString())) {
-			// continue;
-			// }
-
-			if ((Utils.compareAppStoreVersion(para.get("ver"))) && ("11".equals(map.get("app_source").toString()))
-					&& (String.valueOf(para.get("appType")).equals("1") || para.get("appType") == null
-							|| "null".equalsIgnoreCase(para.get("appType")))) {
-				continue;
-			}
-
 			Map<String, Object> appMap = new LinkedHashMap<String, Object>();
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
 			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
-					map.get("id").toString(), para.get("ver"), para.get("appType")));
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
-			appMap.put("summary", map.get("single_word"));
+			appMap.put("summary", map.get("app_desc"));
 			appMap.put("support", map.get("support"));
 			appMap.put("newFuture", map.get("up_desc"));
 			appMap.put("package", map.get("pakeage"));
@@ -1072,13 +1069,22 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 			infoMap.put("company", map.get("develope"));
 			infoMap.put("classify", map.get("cat2_name"));
 			infoMap.put("lastestUpdate", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd"));
+			appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			infoMap.put("version", map.get("version"));
 			infoMap.put("size", df.format(map.get("app_size")));
 			infoMap.put("ageLimit", map.get("age_limit"));
 			infoMap.put("compaticity", map.get("os_version_min"));
 			appMap.put("infomation", infoMap);
-			appMap.put("deployTime", mu.formateDate(map.get("uptime").toString(), "yyyy-MM-dd HH:mm:ss"));
 			list.add(appMap);
+		}
+		if (rlist.size() < 30) {
+			para.put("type", "3");
+			Map<String, Object> rank = getRank(para);
+			Map<String, Object> obj = (Map<String, Object>) rank.get("data");
+			List<Map<String, Object>> rankList = (List<Map<String, Object>>) obj.get("list");
+			for (int i = 0; i < 30 - rlist.size(); i++) {
+				list.add(rankList.get(i));
+			}
 		}
 		subjectMap.put("list", list);
 		subjectMap.put("size", list.size());
@@ -1200,10 +1206,11 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
 			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
-					map.get("id").toString(), para.get("ver"), para.get("appType")));
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
-			appMap.put("summary", map.get("single_word"));
+			appMap.put("summary", map.get("app_desc"));
+			// appMap.put("summary", map.get("single_word"));
 			appMap.put("support", map.get("support"));
 			appMap.put("newFuture", map.get("up_desc"));
 			appMap.put("package", map.get("pakeage"));
@@ -1368,10 +1375,11 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
 			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
-					map.get("id").toString(), para.get("ver"), para.get("appType")));
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
-			appMap.put("summary", map.get("single_word"));
+			appMap.put("summary", map.get("app_desc"));
+			// appMap.put("summary", map.get("single_word"));
 			appMap.put("support", map.get("support"));
 			appMap.put("newFuture", map.get("up_desc"));
 			appMap.put("package", map.get("pakeage"));
@@ -1459,10 +1467,11 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 			appMap.put("id", Integer.parseInt(map.get("id").toString()));
 			appMap.put("categoryId", map.get("category_id"));
 			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
-					map.get("id").toString(), para.get("ver"), para.get("appType")));
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
-			appMap.put("summary", map.get("single_word"));
+			appMap.put("summary", map.get("app_desc"));
+			// appMap.put("summary", map.get("single_word"));
 			appMap.put("support", map.get("support"));
 			appMap.put("newFuture", map.get("up_desc"));
 			appMap.put("package", map.get("pakeage"));
@@ -1628,10 +1637,11 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 				type = map.get("rtype").toString();
 			appMap.put("type", Integer.valueOf(type));
 			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
-					map.get("id").toString(), para.get("ver"), para.get("appType")));
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
-			appMap.put("summary", map.get("single_word"));
+			appMap.put("summary", map.get("app_desc"));
+			// appMap.put("summary", map.get("single_word"));
 			appMap.put("support", map.get("support"));
 			appMap.put("newFuture", map.get("up_desc"));
 			appMap.put("package", map.get("pakeage"));
@@ -1702,13 +1712,33 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 		Map<String, Object> rmap = new LinkedHashMap<String, Object>();
 		rmap.put("result", 1);
 		Map<String, Object> subjectMap = new LinkedHashMap<String, Object>();
-		List<Object> list = this.getAppstoreDao().findListMax("from TSearchHot a where a.appType=? order by id desc",
-				new Object[] { Integer.valueOf(para.get("appType")) }, 10);
 		List<Map<String, String>> rList = new ArrayList<Map<String, String>>();
-		for (Object oo : list) {
+		StringBuffer sql = new StringBuffer();
+		sql.append("select t7.name as cat2_name,t6.* from t_app_theme_bag t2  ");
+		sql.append(" INNER JOIN t_app_theme_bag_list t3 on t2.id = t3.theme_bag_id ");
+		sql.append(" INNER JOIN t_app t6 on t3.sub_id=t6.id ");
+		sql.append(" INNER JOIN t_app_category t7 on t6.category_id=t7.id ");
+		sql.append(" and t2.id=?");
+		sql.append(" order by t3.sort");
+
+		MyUtil mu = MyUtil.getInstance();
+		int stype = 44;
+
+		List<Object> plist = new ArrayList<Object>();
+		plist.add(stype);
+
+		PageBar pb = new PageBar(para);
+		if (mu.isNotBlank(para.get("pageNo")) && NumberUtils.isDigits(para.get("pageNo")))
+			pb.setCurrentPageNum(para.get("pageNo"));
+		if (mu.isNotBlank(para.get("pageSize")) && NumberUtils.isDigits(para.get("pageSize")))
+			pb.setEveryPageNum(para.get("pageSize"));
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapPageBySql(sql.toString(), plist.toArray(),
+				pb);
+
+		for (int i = 0; i < rlist.size(); i++) {
+			Map<String, Object> map = rlist.get(i);
 			Map<String, String> tempMap = new HashMap<String, String>();
-			TSearchHot hot = (TSearchHot) oo;
-			tempMap.put("keyName", hot.getKeyName());
+			tempMap.put("keyName", map.get("app_tag").toString());
 			rList.add(tempMap);
 		}
 
@@ -1804,11 +1834,12 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 
 			appMap.put("categoryId", map.get("category_id"));
 			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
-					map.get("id").toString(), para.get("ver"), para.get("appType")));
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("package", map.get("pakeage"));
 			appMap.put("name", map.get("name"));
-			appMap.put("summary", map.get("single_word"));
+			appMap.put("summary", map.get("app_desc"));
+			// appMap.put("summary", map.get("single_word"));
 			appMap.put("support", map.get("support"));
 			appMap.put("newFuture", map.get("up_desc"));
 			appMap.put("ret", Integer.parseInt(map.get("heat").toString()));
@@ -1925,10 +1956,11 @@ public class InterfaceServiceImp extends BaseService implements InterfaceService
 				type = map.get("rtype").toString();
 			appMap.put("type", Integer.valueOf(type));
 			appMap.put("app", ParaUtils.checkAppUri(map.get("app"), para.get("batchId"), para.get("mac"), "",
-					map.get("id").toString(), para.get("ver"), para.get("appType")));
+					map.get("id").toString()));
 			appMap.put("icon", ParaUtils.checkPicUri(map.get("icon")));
 			appMap.put("name", map.get("name"));
-			appMap.put("summary", map.get("single_word"));
+			appMap.put("summary", map.get("app_desc"));
+			// appMap.put("summary", map.get("single_word"));
 			appMap.put("support", map.get("support"));
 			appMap.put("newFuture", map.get("up_desc"));
 			appMap.put("package", map.get("pakeage"));

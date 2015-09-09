@@ -56,7 +56,7 @@
 		var remark = arguments[2].split(',');
 		var currentHtml = $('#gridtbody').html();
 		var html = "";
-		for ( var i = 0; i < name.length; i++) {
+		for (var i = 0; i < name.length; i++) {
 			var flag = true;
 			$('input[alt="themeId"]').each(function() {
 				if ($(this).val() == name[i])
@@ -97,8 +97,8 @@
 		});
 		if (!flag)
 			return 1;
-		for ( var i = 0; i < arrs.length; i++) {
-			for ( var j = i; j < arrs.length - 1; j++) {
+		for (var i = 0; i < arrs.length; i++) {
+			for (var j = i; j < arrs.length - 1; j++) {
 				if (arrs[i] == arrs[j + 1]) {
 					flag = false;
 					break;
@@ -122,7 +122,7 @@
 					</td>
 					<input type="hidden" name="id" value="${vo.id }">
 					<td width="75%"><input type="text" name="name" id="name"
-						value="${vo.sdkName}" style=" width:300px" /></td>
+						value="${vo.sdkName}" style="width: 300px" /></td>
 				</tr>
 				<tr class="even">
 					<td width="25%">SDK类型：<font color="red">*</font>
@@ -132,14 +132,13 @@
 								<c:if test="${vo.onOrOff=='1'}"> selected</c:if>>开启</option>
 							<option value="0"
 								<c:if test="${vo.onOrOff=='0'}"> selected</c:if>>关闭</option>
-					</select>
-					</td>
+					</select></td>
 				</tr>
 				<tr class="even">
 					<td width="25%">国家：<font color="red">*</font>
 					</td>
 					<td width="75%"><select name="country" id="country"
-						style="width:300px">
+						style="width: 300px">
 							<option value="1"
 								<c:if test="${vo.country=='1'}"> selected</c:if>>中国</option>
 							<option value="0"
@@ -150,12 +149,12 @@
 					<td width="25%">激活时间：<font color="red">*</font>
 					</td>
 					<td width="75%"><input type="text" name="activeTime"
-						id="activeTime" value="${vo.activeTime}" style="width:300px" /></td>
+						id="activeTime" value="${vo.activeTime}" style="width: 300px" /></td>
 				</tr>
 				<tr class="even">
 					<td width="100%" colspan="2"><span style="width: 175px;">批次列表：<font
-							color="red">*</font> </span> <input type="button" value="选择批次"
-						class="btn" onclick="cBatch()">
+							color="red">*</font>
+					</span> <input type="button" value="选择批次" class="btn" onclick="cBatch()">
 					</td>
 				</tr>
 				<tr class="odd2">
@@ -169,18 +168,22 @@
 								</tr>
 							</thead>
 							<tbody id="gridtbody">
-								<c:forEach items="${vo.list}" var="tlist" varStatus="status">
-									<tr class="even" id="tr_td_${status.index}">
-										<td>${tlist.name}</td>
-										<td>${tlist.batch_id}<input type="hidden" name="batchId"
-											id="batchId" value="${tlist.batch_id}">
-										</td>
-										<td>${tlist.remark}</td>
-										<td>[<a href='javascript:del_(${status.index})'>删除</a>]</td>
-									</tr>
-								</c:forEach>
+								<c:if test="${ vo.list ==null ||fn:length(vo.list)==0}">
+									<c:forEach items="${vo.list}" var="tlist" varStatus="status">
+										<tr class="even" id="tr_td_${status.index}">
+											<td>${tlist.name}</td>
+											<td>${tlist.batch_id}<input type="hidden" name="batchId"
+												id="batchId" value="${tlist.batch_id}">
+											</td>
+											<td>${tlist.remark}</td>
+											<td>[<a href='javascript:del_(${status.index})'>删除</a>]
+											</td>
+										</tr>
+									</c:forEach>
+								</c:if>
 							</tbody>
-						</table></td>
+						</table>
+					</td>
 				</tr>
 				<tr class="odd2">
 					<td colspan="2" align="center"><input type="button"

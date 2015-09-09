@@ -30,7 +30,9 @@ public class AppServiceImp extends BaseService implements AppService {
 		String versionCode = para.get("versionCode");
 		if (!"".equals(versionCode) && null != versionCode)
 			app.setVersionCode(Integer.valueOf(versionCode));
-		List<?> count = this.getAppstoreDao().findList("from TApp where appSource=? and name=? and develope=? and appStatus>=0", new Object[] { 0, app.getName(), app.getDevelope() });
+		List<?> count = this.getAppstoreDao().findList(
+				"from TApp where appSource=? and name=? and develope=? and appStatus>=0",
+				new Object[] { 0, app.getName(), app.getDevelope() });
 		if (count != null && count.size() > 0) {
 			rmap.put("info", "isR");
 			return rmap;
@@ -41,13 +43,13 @@ public class AppServiceImp extends BaseService implements AppService {
 		app.setSourceUrl("");
 		app.setAppSource(0);
 		app.setAppStatus(1);
-		app.setAppTag(app.getName());
+		// app.setAppTag(app.getName());
 		app.setNotifyStatus(1);
 		app.setShareContent(para.get("shareContent"));
 		app.setCategoryId(Integer.valueOf(para.get("categoryId")));
 		app.setSubjectId(app.getSubjectId() == null ? 0 : app.getSubjectId());
 		app.setVersionCode(app.getVersionCode() == null ? 0 : app.getVersionCode());
-		app.setAppTag(app.getAppTag() == null ? "" : app.getAppTag());
+		// app.setAppTag(app.getAppTag() == null ? "" : app.getAppTag());
 		app.setOsVersionMin(app.getOsVersionMin() == null ? "" : app.getOsVersionMin());
 		app.setSingleWord(app.getAppTag() == null ? "" : app.getSingleWord());
 		if (para.get("appSize") != null) {
@@ -86,6 +88,9 @@ public class AppServiceImp extends BaseService implements AppService {
 		if (para.get("osVersionMin") != null) {
 			app.setOsVersionMin(para.get("osVersionMin"));
 		}
+		if (para.get("appTag") != null) {
+			app.setAppTag(para.get("appTag"));
+		}
 		if (para.get("support") != null) {
 			app.setSupport(para.get("support"));
 		}
@@ -113,22 +118,32 @@ public class AppServiceImp extends BaseService implements AppService {
 		FileUtils.deleteDirectory(new File(appTempRootPath));
 
 		// 更新资源地址
-		app.setApp(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_APP + Constants.FILE_SEPARATOR + app.getApp());
+		app.setApp(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_APP
+				+ Constants.FILE_SEPARATOR + app.getApp());
 		if (app.getEmbededApp() != null)
-			app.setEmbededApp(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_EMBEDED_APP + Constants.FILE_SEPARATOR + app.getEmbededApp());
-		app.setIcon(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_ICON + Constants.FILE_SEPARATOR + app.getIcon());
-		app.setMainPic(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC + Constants.FILE_SEPARATOR + app.getMainPic());
-		app.setMainPic2(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC + Constants.FILE_SEPARATOR + app.getMainPic2());
-		app.setPic1(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC + Constants.FILE_SEPARATOR + app.getPic1());
-		app.setPic2(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC + Constants.FILE_SEPARATOR + app.getPic2());
+			app.setEmbededApp(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_EMBEDED_APP
+					+ Constants.FILE_SEPARATOR + app.getEmbededApp());
+		app.setIcon(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_ICON
+				+ Constants.FILE_SEPARATOR + app.getIcon());
+		app.setMainPic(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC
+				+ Constants.FILE_SEPARATOR + app.getMainPic());
+		app.setMainPic2(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC
+				+ Constants.FILE_SEPARATOR + app.getMainPic2());
+		app.setPic1(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC
+				+ Constants.FILE_SEPARATOR + app.getPic1());
+		app.setPic2(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC
+				+ Constants.FILE_SEPARATOR + app.getPic2());
 		if (app.getPic3() != null) {
-			app.setPic3(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC + Constants.FILE_SEPARATOR + app.getPic3());
+			app.setPic3(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC
+					+ Constants.FILE_SEPARATOR + app.getPic3());
 		}
 		if (app.getPic4() != null) {
-			app.setPic4(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC + Constants.FILE_SEPARATOR + app.getPic4());
+			app.setPic4(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC
+					+ Constants.FILE_SEPARATOR + app.getPic4());
 		}
 		if (app.getPic5() != null) {
-			app.setPic5(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC + Constants.FILE_SEPARATOR + app.getPic5());
+			app.setPic5(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC
+					+ Constants.FILE_SEPARATOR + app.getPic5());
 		}
 		this.getAppstoreDao().update(app);
 		char a = 6;
@@ -139,7 +154,8 @@ public class AppServiceImp extends BaseService implements AppService {
 			appBatch.setId(id + "|" + batchIds[i]);
 			appBatch.setAppId(id);
 			appBatch.setBatchId(batchIds[i]);
-			appBatch.setApp(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_APP_BATCH + Constants.FILE_SEPARATOR + para.get("appBatch_" + indexs[i]));
+			appBatch.setApp(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_APP_BATCH
+					+ Constants.FILE_SEPARATOR + para.get("appBatch_" + indexs[i]));
 			appBatch.setAppSize(NumberUtils.toDouble(para.get("appBatchSize_" + indexs[i])));
 			appBatch.setCtime(new Date());
 			this.getAppstoreDao().save(appBatch);
@@ -171,12 +187,15 @@ public class AppServiceImp extends BaseService implements AppService {
 	@Override
 	public TApp get(Map<String, String> para) throws Exception {
 		MyUtil mu = MyUtil.getInstance();
-		Map<String, Object> rmap = this.getAppstoreDao().findMapBySql("SELECT t1.* FROM t_app t1 WHERE t1.id = ?", new Object[] { mu.toInt(para.get("id")) });
+		Map<String, Object> rmap = this.getAppstoreDao().findMapBySql("SELECT t1.* FROM t_app t1 WHERE t1.id = ?",
+				new Object[] { mu.toInt(para.get("id")) });
 		TApp po = new TApp();
 		if (MapUtils.isNotEmpty(rmap))
 			mu.map2Object(rmap, po);
 		@SuppressWarnings("unchecked")
-		List<TAppBatch> appBatchList = this.getAppstoreDao().findListBySql("SELECT t1.* FROM t_app_batch t1 WHERE t1.app_id = ?", new Object[] { mu.toInt(rmap.get("id").toString()) }, TAppBatch.class);
+		List<TAppBatch> appBatchList = this.getAppstoreDao().findListBySql(
+				"SELECT t1.* FROM t_app_batch t1 WHERE t1.app_id = ?",
+				new Object[] { mu.toInt(rmap.get("id").toString()) }, TAppBatch.class);
 		po.setAppBatchList(appBatchList);
 		return po;
 	}
@@ -211,7 +230,8 @@ public class AppServiceImp extends BaseService implements AppService {
 		if (pb.getTotalNum() == 0)
 			return pb;
 		sql.insert(0, "SELECT t1.* ");
-		List<Map<String, Object>> rList = this.getAppstoreDao().findListMapPageBySql(sql.toString() + " order by id desc", plist.toArray(), pb);
+		List<Map<String, Object>> rList = this.getAppstoreDao()
+				.findListMapPageBySql(sql.toString() + " order by id desc", plist.toArray(), pb);
 		pb.setResultList(rList);
 		return pb;
 	}
@@ -234,52 +254,62 @@ public class AppServiceImp extends BaseService implements AppService {
 		if (app.getApp() == null) {
 			app.setApp(srcApp.getApp());
 		} else {
-			app.setApp(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_APP + Constants.FILE_SEPARATOR + app.getApp());
+			app.setApp(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_APP
+					+ Constants.FILE_SEPARATOR + app.getApp());
 		}
 		if (app.getEmbededApp() == null) {
 			app.setEmbededApp(srcApp.getEmbededApp());
 		} else {
-			app.setEmbededApp(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_EMBEDED_APP + Constants.FILE_SEPARATOR + app.getEmbededApp());
+			app.setEmbededApp(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_EMBEDED_APP
+					+ Constants.FILE_SEPARATOR + app.getEmbededApp());
 		}
 		if (app.getIcon() == null) {
 			app.setIcon(srcApp.getIcon());
 		} else {
-			app.setIcon(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_ICON + Constants.FILE_SEPARATOR + app.getIcon());
+			app.setIcon(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_ICON
+					+ Constants.FILE_SEPARATOR + app.getIcon());
 		}
 		if (app.getMainPic() == null) {
 			app.setMainPic(srcApp.getMainPic());
 		} else {
-			app.setMainPic(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC + Constants.FILE_SEPARATOR + app.getMainPic());
+			app.setMainPic(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC
+					+ Constants.FILE_SEPARATOR + app.getMainPic());
 		}
 		if (app.getMainPic2() == null) {
 			app.setMainPic2(srcApp.getMainPic2());
 		} else {
-			app.setMainPic2(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC + Constants.FILE_SEPARATOR + app.getMainPic2());
+			app.setMainPic2(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC
+					+ Constants.FILE_SEPARATOR + app.getMainPic2());
 		}
 		if (app.getPic1() == null) {
 			app.setPic1(srcApp.getPic1());
 		} else {
-			app.setPic1(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC + Constants.FILE_SEPARATOR + app.getPic1());
+			app.setPic1(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC
+					+ Constants.FILE_SEPARATOR + app.getPic1());
 		}
 		if (app.getPic2() == null) {
 			app.setPic2(srcApp.getPic2());
 		} else {
-			app.setPic2(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC + Constants.FILE_SEPARATOR + app.getPic2());
+			app.setPic2(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC
+					+ Constants.FILE_SEPARATOR + app.getPic2());
 		}
 		if (app.getPic3() == null) {
 			app.setPic3(srcApp.getPic3());
 		} else {
-			app.setPic3(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC + Constants.FILE_SEPARATOR + app.getPic3());
+			app.setPic3(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC
+					+ Constants.FILE_SEPARATOR + app.getPic3());
 		}
 		if (app.getPic4() == null) {
 			app.setPic4(srcApp.getPic4());
 		} else {
-			app.setPic4(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC + Constants.FILE_SEPARATOR + app.getPic4());
+			app.setPic4(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC
+					+ Constants.FILE_SEPARATOR + app.getPic4());
 		}
 		if (app.getPic5() == null) {
 			app.setPic5(srcApp.getPic5());
 		} else {
-			app.setPic5(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC + Constants.FILE_SEPARATOR + app.getPic5());
+			app.setPic5(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_PIC
+					+ Constants.FILE_SEPARATOR + app.getPic5());
 		}
 		if (para.get("appSize") != null) {
 			app.setAppSize(Double.valueOf(para.get("appSize")));
@@ -288,7 +318,8 @@ public class AppServiceImp extends BaseService implements AppService {
 			app.setAppDesc(para.get("appDesc"));
 		}
 		if (para.get("embededApp") != null) {
-			app.setEmbededApp(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_EMBEDED_APP + Constants.FILE_SEPARATOR + para.get("embededApp"));
+			app.setEmbededApp(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_EMBEDED_APP
+					+ Constants.FILE_SEPARATOR + para.get("embededApp"));
 		}
 		if (para.get("embededAppSize") != null) {
 			app.setEmbededAppSize(Double.valueOf(para.get("embededAppSize")));
@@ -326,7 +357,9 @@ public class AppServiceImp extends BaseService implements AppService {
 		if (para.get("versionCode") != null && !"".equals(para.get("versionCode"))) {
 			app.setVersionCode(Integer.valueOf(para.get("versionCode")));
 		}
-
+		if (para.get("appTag") != null) {
+			app.setAppTag(para.get("appTag"));
+		}
 		app.setNotify(srcApp.getNotify());
 		app.setNotifyStatus(srcApp.getNotifyStatus());
 		app.setUptime(new Date());
@@ -334,11 +367,11 @@ public class AppServiceImp extends BaseService implements AppService {
 		app.setSourceUrl("");
 		app.setAppSource(0);
 		app.setAppStatus(1);
-		app.setAppTag(app.getName());
+		// app.setAppTag(app.getName());
 		app.setCategoryId(Integer.valueOf(para.get("categoryId")));
 		app.setSubjectId(app.getSubjectId() == null ? 0 : app.getSubjectId());
 		app.setVersionCode(app.getVersionCode() == null ? versionCode : app.getVersionCode());
-		app.setAppTag(app.getAppTag() == null ? "" : app.getAppTag());
+		// app.setAppTag(app.getAppTag() == null ? "" : app.getAppTag());
 		app.setOsVersionMin(app.getOsVersionMin() == null ? "" : app.getOsVersionMin());
 		app.setSingleWord(app.getAppTag() == null ? "" : app.getSingleWord());
 		app.setDownCnt(srcApp.getDownCnt());
@@ -359,15 +392,18 @@ public class AppServiceImp extends BaseService implements AppService {
 			appBatch.setId(id + "|" + batchIds[i]);
 			appBatch.setAppId(id);
 			appBatch.setBatchId(batchIds[i]);
-			appBatch.setApp(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_APP_BATCH + Constants.FILE_SEPARATOR + para.get("appBatch_" + indexs[i]));
+			appBatch.setApp(Constants.SUB_ROOT_APP + id + Constants.FILE_SEPARATOR + Constants.FILE_TYPE_APP_BATCH
+					+ Constants.FILE_SEPARATOR + para.get("appBatch_" + indexs[i]));
 			appBatch.setAppSize(NumberUtils.toDouble(para.get("appBatchSize_" + indexs[i])));
 			appBatch.setCtime(new Date());
 			this.getAppstoreDao().saveOrUpdate(appBatch);
 		}
 		if (batchIds.length > 0) {
 			String batchIdStr = ArrayUtils.toString(batchIds);
-			String batchIdCon = StringUtils.replace(StringUtils.replace(StringUtils.replace(batchIdStr, "{", "'"), ",", "','"), "}", "'");
-			this.getAppstoreDao().excuteBySql("DELETE FROM t_app_batch WHERE app_id = " + id + " AND batch_id NOT IN(" + batchIdCon + ")");
+			String batchIdCon = StringUtils
+					.replace(StringUtils.replace(StringUtils.replace(batchIdStr, "{", "'"), ",", "','"), "}", "'");
+			this.getAppstoreDao().excuteBySql(
+					"DELETE FROM t_app_batch WHERE app_id = " + id + " AND batch_id NOT IN(" + batchIdCon + ")");
 		} else {
 			this.getAppstoreDao().excuteBySql("DELETE FROM t_app_batch WHERE app_id = " + id);
 		}

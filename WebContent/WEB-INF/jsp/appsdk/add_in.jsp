@@ -19,7 +19,7 @@ function add_(){
 		return;
 	}
 
-	ajaxPost('${pageContext.request.contextPath}/appsdk/add_in',backAdd_);
+	ajaxPost('${pageContext.request.contextPath}/appsdk/add_in.htm',backAdd_);
 }
 function backAdd_(data){
 	if(data[0]['info']=='ok'){

@@ -32,7 +32,7 @@ public class ParaUtils {
 		if (StringUtils.startsWith(uri.toString(), "http://")) {
 			return uri.toString();
 		} else {
-			uri = MyConfigurer.getEvn("resource_domain")+uri;
+			uri = MyConfigurer.getEvn("resource_domain") + uri;
 			uri = URLEncoder.encode(uri.toString());
 		}
 		return MyConfigurer.getEvn("interface_domain") + "/downloadPic.htm?picUrl=" + uri.toString();
@@ -45,15 +45,12 @@ public class ParaUtils {
 	// return "";
 	// if (StringUtils.startsWith(uri.toString(), "http://"))
 	// return uri.toString();
-	// return MyConfigurer.getEvn("interface_domain") + "/downloadApp.htm?appUrl=" + uri.toString();
+	// return MyConfigurer.getEvn("interface_domain") +
+	// "/downloadApp.htm?appUrl=" + uri.toString();
 	// }
-	//	
+	//
 	@SuppressWarnings("deprecation")
-	public static String checkAppUri(Object uri, String batchId, String mac, String userId, String appId, String ver, String appType) {
-		if (ver == null)
-			ver = "";
-		if (appType == null)
-			appType = "";
+	public static String checkAppUri(Object uri, String batchId, String mac, String userId, String appId) {
 		if (uri == null || "null".equalsIgnoreCase(uri.toString()))
 			return "";
 		if (StringUtils.isBlank(uri.toString()))
@@ -61,10 +58,11 @@ public class ParaUtils {
 		if (StringUtils.startsWith(uri.toString(), "http://")) {
 			uri = URLEncoder.encode(uri.toString());
 		} else {
-			uri = MyConfigurer.getEvn("resource_domain")+uri;
+			uri = MyConfigurer.getEvn("resource_domain") + uri;
 			uri = URLEncoder.encode(uri.toString());
 		}
-		return MyConfigurer.getEvn("interface_domain") + "/downloadApp.htm?appUrl=" + uri.toString() + "&batchId=" + batchId + "&mac=" + mac + "&userId=" + userId + "&appId=" + appId + "&ver=" + ver + "&appType=" + appType;
+		return MyConfigurer.getEvn("interface_domain") + "/downloadApp.htm?appUrl=" + uri.toString() + "&batchId="
+				+ batchId + "&mac=" + mac + "&userId=" + userId + "&appId=" + appId;
 	}
 
 }

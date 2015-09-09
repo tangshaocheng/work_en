@@ -15,7 +15,7 @@
 		var html = '';
 		$('#resultData').html('');
 		var result = data[0]['resultList'];
-		for ( var i = 0; i < result.length; i++) {
+		for (var i = 0; i < result.length; i++) {
 			i % 2 == 0 ? html += "<tr class='even'>"
 					: html += "<tr class='odd2'>";
 			var operation = "[<a href='javascript:up_(" + result[i]['id']
@@ -23,17 +23,17 @@
 			operation += "[<a href='javascript:del_(" + result[i]['id']
 					+ ")'>删除</a>]";
 			var bagType = '';
-			if (result[i]['OnOrOff'] == '1'){
+			if (result[i]['OnOrOff'] == '1') {
 				bagType = '开启';
 			}
-			var country='';
-			if (result[i]['OnOrOff'] =='0'){
+			var country = '';
+			if (result[i]['OnOrOff'] == '0') {
 				bagType = '关闭';
 			}
-			if (result[i]['country'] == '1'){
+			if (result[i]['country'] == '1') {
 				country = '中国';
 			}
-			if (result[i]['country'] =='0'){
+			if (result[i]['country'] == '0') {
 				country = '外国';
 			}
 			html += '<td>' + result[i]['id'] + '</td>';
@@ -78,8 +78,8 @@
 				arrs[i] = $(this).val();
 		});
 		var flag = true;
-		for ( var i = 0; i < arrs.length; i++) {
-			for ( var j = i; j < arrs.length - 1; j++) {
+		for (var i = 0; i < arrs.length; i++) {
+			for (var j = i; j < arrs.length - 1; j++) {
 				if (arrs[i] == arrs[j + 1]) {
 					flag = false;
 					break;
@@ -107,8 +107,8 @@
 			<table>
 				<tr>
 					<td width="100%">SDK名称：<input type="text" name="name"
-						style="width:100px">&nbsp;&nbsp; SDK类型：<select
-						name="bagType" style="width:100px"><option value="">全部</option>
+						style="width: 100px">&nbsp;&nbsp; SDK类型：<select
+						name="bagType" style="width: 100px"><option value="">全部</option>
 							<option value="1">开启</option>
 							<option value="0">关闭</option>
 					</select>&nbsp;&nbsp; <input type="button" value="查询" onclick="queryData()"

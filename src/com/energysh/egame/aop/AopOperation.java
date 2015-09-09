@@ -44,12 +44,14 @@ public class AopOperation {
 
 	@AfterThrowing(pointcut = "com.energysh.egame.aop.SystemArchitecture.serviceLayer()", throwing = "ex")
 	public void doServiceLog(JoinPoint point, Exception ex) {
-		log.info("service exception:[class:" + point.getSignature().getDeclaringTypeName() + ",method:" + point.getSignature().getName() + "] exception:", ex);
+		log.info("service exception:[class:" + point.getSignature().getDeclaringTypeName() + ",method:"
+				+ point.getSignature().getName() + "] exception:", ex);
 	}
 
 	@AfterThrowing(pointcut = "com.energysh.egame.aop.SystemArchitecture.webLayer()", throwing = "ex")
 	public void doWebLog(JoinPoint point, Exception ex) {
-		log.info("web exception:[class:" + point.getSignature().getDeclaringTypeName() + ",method:" + point.getSignature().getName() + "] exception:", ex);
+		log.info("web exception:[class:" + point.getSignature().getDeclaringTypeName() + ",method:"
+				+ point.getSignature().getName() + "] exception:", ex);
 	}
 
 	@Around("com.energysh.egame.aop.SystemArchitecture.cacheLayer()")

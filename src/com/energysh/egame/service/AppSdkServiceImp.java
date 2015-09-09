@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import com.energysh.egame.po.appstore.TAppSdk;
 import com.energysh.egame.util.MyUtil;
 import com.energysh.egame.util.PageBar;
@@ -18,8 +17,7 @@ public class AppSdkServiceImp extends BaseService implements AppSdkService {
 	public Map<String, String> add(Map<String, String> para) throws Exception {
 		Map<String, String> rmap = new HashMap<String, String>();
 		String name = para.get("name");
-		int count = this.getAppstoreDao().findIntBySql(
-				"SELECT * from t_app_sdk where sdk_name=?",
+		int count = this.getAppstoreDao().findIntBySql("SELECT * from t_app_sdk where sdk_name=?",
 				new Object[] { name });
 		if (count > 0) {
 			rmap.put("info", "exits");
@@ -44,13 +42,10 @@ public class AppSdkServiceImp extends BaseService implements AppSdkService {
 		MyUtil mu = MyUtil.getInstance();
 		String id = para.get("id");
 		if (mu.isNotBlank(id)) {
-			this.getAppstoreDao().excuteBySql(
-					"DELETE FROM t_app_sdk WHERE id = ?",
+			this.getAppstoreDao().excuteBySql("DELETE FROM t_app_sdk WHERE id = ?",
 					new Object[] { Integer.parseInt(id) });
-			this.getAppstoreDao()
-					.excuteBySql(
-							"UPDATE t_device_batch SET sdk_switch=0,sdk_id=NULL WHERE sdk_id = ?",
-							new Object[] { Integer.parseInt(id) });
+			this.getAppstoreDao().excuteBySql("UPDATE t_device_batch SET sdk_switch=0,sdk_id=NULL WHERE sdk_id = ?",
+					new Object[] { Integer.parseInt(id) });
 			rmap.put("info", "ok");
 		} else {
 			rmap.put("info", "error");
@@ -66,22 +61,16 @@ public class AppSdkServiceImp extends BaseService implements AppSdkService {
 		String type = para.get("bagType");
 		String country = para.get("country");
 		String activeTime = para.get("activeTime");
-		this.getAppstoreDao()
-				.excuteBySql(
-						"UPDATE t_app_sdk SET sdk_name=?,country=?,activeTime=?,OnOrOff=? WHERE id=?",
-						new Object[] { name, country, activeTime, type, id });
-		this.getAppstoreDao()
-				.excuteBySql(
-						"UPDATE t_device_batch SET sdk_id=NULL,sdk_switch='0' WHERE sdk_id=?",
-						new Object[] { id });
+		this.getAppstoreDao().excuteBySql("UPDATE t_app_sdk SET sdk_name=?,country=?,activeTime=?,OnOrOff=? WHERE id=?",
+				new Object[] { name, country, activeTime, type, id });
+		this.getAppstoreDao().excuteBySql("UPDATE t_device_batch SET sdk_id=NULL,sdk_switch='0' WHERE sdk_id=?",
+				new Object[] { id });
 
-		 String[] batchid = para.get("batchId").split("");
-		 for (int i = 0; i < batchid.length; i++) {
-			 this.getAppstoreDao()
-				.excuteBySql(
-						"UPDATE t_device_batch SET sdk_id=?,sdk_switch=? WHERE batch_id=?",
-						new Object[] { id, type, batchid[i] });
-		 }
+		String[] batchid = para.get("batchId").split("");
+		for (int i = 0; i < batchid.length; i++) {
+			this.getAppstoreDao().excuteBySql("UPDATE t_device_batch SET sdk_id=?,sdk_switch=? WHERE batch_id=?",
+					new Object[] { id, type, batchid[i] });
+		}
 		rmap.put("info", "ok");
 		return rmap;
 	}
@@ -104,24 +93,21 @@ public class AppSdkServiceImp extends BaseService implements AppSdkService {
 			sql.append(" AND t1.OnOrOff = ?");
 			plist.add(Integer.valueOf(para.get("bagType")));
 		}
-		pb.setTotalNum(this.getAppstoreDao().findIntBySql(
-				"SELECT COUNT(t1.id) " + sql, plist.toArray()));
+		pb.setTotalNum(this.getAppstoreDao().findIntBySql("SELECT COUNT(t1.id) " + sql, plist.toArray()));
 		if (pb.getTotalNum() == 0)
 			return pb;
 		sql.insert(0, "SELECT t1.* ");
-		List<Map<String, Object>> rList = this.getAppstoreDao()
-				.findListMapPageBySql(sql.toString(), plist.toArray(), pb);
+		List<Map<String, Object>> rList = this.getAppstoreDao().findListMapPageBySql(sql.toString(), plist.toArray(),
+				pb);
 		pb.setResultList(rList);
 		return pb;
 	}
 
 	@Override
 	public TAppSdk get(Map<String, String> para) throws Exception {
-		List<Map<String, Object>> rlist = this
-				.getAppstoreDao()
-				.findListMapBySql(
-						"SELECT * from t_app_sdk a LEFT JOIN t_device_batch b ON a.id=b.sdk_id WHERE a.id=?",
-						new Object[] { Integer.valueOf(para.get("id")) });
+		List<Map<String, Object>> rlist = this.getAppstoreDao().findListMapBySql(
+				"SELECT * from t_app_sdk a LEFT JOIN t_device_batch b ON a.id=b.sdk_id WHERE a.id=?",
+				new Object[] { Integer.valueOf(para.get("id")) });
 		TAppSdk po = new TAppSdk();
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		po.setId(Integer.valueOf(para.get("id")));
